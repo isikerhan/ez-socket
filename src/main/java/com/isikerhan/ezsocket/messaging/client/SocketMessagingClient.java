@@ -7,10 +7,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.isikerhan.ezsocket.address.SimpleAddress;
 import com.isikerhan.ezsocket.messaging.Message;
 import com.isikerhan.ezsocket.messaging.MessageSender;
 import com.isikerhan.ezsocket.messaging.callback.ConnectionStatusListener;
-import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
+import com.isikerhan.ezsocket.messaging.callback.OnMessageReceivedListener;
 import com.isikerhan.ezsocket.messaging.exception.AlreadyClosedException;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionClosedException;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
@@ -27,7 +28,7 @@ import com.isikerhan.ezsocket.messaging.listener.MessageQueueListener;
 public class SocketMessagingClient implements MessagingClient, ConnectionStatusListener {
 
 	private ExecutorService executor = Executors.newCachedThreadPool();
-	private OnMessageReceiveListener msgCallback;
+	private OnMessageReceivedListener msgCallback;
 	private ConnectionStatusListener connCallback;
 	private Socket socket;
 	private Queue<Message> messageQueue;
@@ -35,11 +36,12 @@ public class SocketMessagingClient implements MessagingClient, ConnectionStatusL
 	private MessageQueueListener queueListener; // thread that listens to the message queue
 	private boolean closed = false;
 	
-	public SocketMessagingClient(OnMessageReceiveListener messageListener) {
+	public SocketMessagingClient(OnMessageReceivedListener messageListener) {
 		this.msgCallback = messageListener;
 		this.messageQueue = new ConcurrentLinkedQueue<Message>();
 	}
 
+	@Override
 	public void connect(String host, int port) throws ConnectionException {
 		if(isClosed())
 			throw new AlreadyClosedException();
@@ -60,7 +62,15 @@ public class SocketMessagingClient implements MessagingClient, ConnectionStatusL
 			throw new ConnectionException(e);
 		}
 	}
+	
+	@Override
+	public void connect(SimpleAddress address) throws ConnectionException {
+		if(address == null)
+			throw new IllegalArgumentException("Address can't be null");
+		connect(address.getHost(), address.getPort());
+	}
 
+	@Override
 	public void disconnect() throws ConnectionClosedException {
 		if(isClosed())
 			throw new AlreadyClosedException();
@@ -113,16 +123,16 @@ public class SocketMessagingClient implements MessagingClient, ConnectionStatusL
 	}
 
 	@Override
-	public void onConnectionEstablish(Socket socket) {
+	public void onConnectionEstablished(Socket socket) {
 		if(connCallback != null)
-			connCallback.onConnectionEstablish(socket);
+			connCallback.onConnectionEstablished(socket);
 	}
 
 	@Override
-	public void onDisconnect(Socket socket) {
+	public void onPeerDisconnected(Socket socket) {
 		this.socket = null;
 		if(connCallback != null)
-			connCallback.onDisconnect(socket);
+			connCallback.onPeerDisconnected(socket);
 	}
 
 	@Override

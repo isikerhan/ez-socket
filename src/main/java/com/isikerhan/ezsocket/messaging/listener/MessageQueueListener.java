@@ -3,7 +3,7 @@ package com.isikerhan.ezsocket.messaging.listener;
 import java.util.Queue;
 
 import com.isikerhan.ezsocket.messaging.Message;
-import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
+import com.isikerhan.ezsocket.messaging.callback.OnMessageReceivedListener;
 
 /**
  * The {@linkplain Runnable} that listens to a message queue
@@ -14,10 +14,10 @@ import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
 public class MessageQueueListener implements Runnable {
 
 	private Queue<Message> messageQueue;// ilgili mesaj kuyrugu
-	private OnMessageReceiveListener listener;// callback
+	private OnMessageReceivedListener listener;// callback
 	private volatile boolean listening = true;
 
-	public MessageQueueListener(Queue<Message> messageQueue, OnMessageReceiveListener listener) {
+	public MessageQueueListener(Queue<Message> messageQueue, OnMessageReceivedListener listener) {
 		this.messageQueue = messageQueue;
 		this.listener = listener;
 	}
@@ -35,7 +35,7 @@ public class MessageQueueListener implements Runnable {
 				}
 				if (message != null && listener != null)
 					// invoke the callback if there is an incoming message
-					listener.onMessageReceive(message);
+					listener.onMessageReceived(message);
 			}
 		}
 	}

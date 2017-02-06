@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 import com.isikerhan.ezsocket.messaging.Message;
 import com.isikerhan.ezsocket.messaging.callback.ConnectionStatusListener;
-import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
+import com.isikerhan.ezsocket.messaging.callback.OnMessageReceivedListener;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
 
 /**
@@ -15,7 +15,7 @@ import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
  */
 public class AsyncMessageListener extends SyncMessageListener implements Runnable {
 
-	private OnMessageReceiveListener messageListener;
+	private OnMessageReceivedListener messageListener;
 	private ConnectionStatusListener connListener;
 
 	public AsyncMessageListener(Socket socket, Queue<Message> messageQueue) {
@@ -37,7 +37,7 @@ public class AsyncMessageListener extends SyncMessageListener implements Runnabl
 			executor.submit(new Runnable(){
 				@Override
 				public void run() {
-					connListener.onDisconnect(socket);
+					connListener.onPeerDisconnected(socket);
 				}
 			});
 			executor.shutdown();

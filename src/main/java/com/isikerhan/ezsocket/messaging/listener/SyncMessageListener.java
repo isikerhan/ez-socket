@@ -9,7 +9,7 @@ import java.util.Queue;
 
 import com.isikerhan.ezsocket.address.SimpleAddress;
 import com.isikerhan.ezsocket.messaging.Message;
-import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
+import com.isikerhan.ezsocket.messaging.callback.OnMessageReceivedListener;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
 import com.isikerhan.ezsocket.util.IOUtils;
 
@@ -30,7 +30,7 @@ public class SyncMessageListener {
 		this.messageQueue = messageQueue;
 	}
 
-	public void listenForMessages(OnMessageReceiveListener callback) throws ConnectionException {
+	public void listenForMessages(OnMessageReceivedListener callback) throws ConnectionException {
 
 		boolean connected = true;
 		while (connected) {

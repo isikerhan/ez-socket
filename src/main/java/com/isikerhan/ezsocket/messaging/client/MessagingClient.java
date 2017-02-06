@@ -2,6 +2,7 @@ package com.isikerhan.ezsocket.messaging.client;
 
 import java.io.Closeable;
 
+import com.isikerhan.ezsocket.address.SimpleAddress;
 import com.isikerhan.ezsocket.messaging.callback.ConnectionStatusListener;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionClosedException;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
@@ -23,6 +24,13 @@ public interface MessagingClient extends Closeable {
 	 * @throws ConnectionException
 	 */
 	void connect(String host, int port) throws ConnectionException;
+	
+	/**
+	 * Connects to the messaging server which is at given address.
+	 * @param address
+	 * @throws ConnectionException
+	 */
+	void connect(SimpleAddress address) throws ConnectionException;
 	
 	/**
 	 * Disconnects from the connected messaging server.

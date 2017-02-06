@@ -18,7 +18,7 @@ import com.isikerhan.ezsocket.address.SimpleAddress;
 import com.isikerhan.ezsocket.messaging.Message;
 import com.isikerhan.ezsocket.messaging.MessageSender;
 import com.isikerhan.ezsocket.messaging.callback.ConnectionStatusListener;
-import com.isikerhan.ezsocket.messaging.callback.OnMessageReceiveListener;
+import com.isikerhan.ezsocket.messaging.callback.OnMessageReceivedListener;
 import com.isikerhan.ezsocket.messaging.exception.AlreadyClosedException;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
 import com.isikerhan.ezsocket.messaging.exception.PeerNotFoundException;
@@ -34,7 +34,7 @@ import com.isikerhan.ezsocket.messaging.listener.MessageQueueListener;
  */
 public class SocketMessagingServer implements MessagingServer, ConnectionStatusListener {
 
-	private OnMessageReceiveListener msgCallback;
+	private OnMessageReceivedListener msgCallback;
 	private ConnectionStatusListener connCallback;
 	private ConnectionListener connListener;
 	private ExecutorService executor = Executors.newCachedThreadPool();
@@ -44,7 +44,7 @@ public class SocketMessagingServer implements MessagingServer, ConnectionStatusL
 	private List<AsyncMessageListener> msgListeners;
 	private boolean closed = false;
 
-	public SocketMessagingServer(OnMessageReceiveListener messageListener) {
+	public SocketMessagingServer(OnMessageReceivedListener messageListener) {
 		this.msgCallback = messageListener;
 		this.clients = new HashMap<SimpleAddress, Socket>();
 		this.messageQueue = new ConcurrentLinkedQueue<Message>();
@@ -101,18 +101,25 @@ public class SocketMessagingServer implements MessagingServer, ConnectionStatusL
 	}
 
 	@Override
-	public void sendMessage(byte[] message, String host, int port) throws ConnectionException {
+	public void sendMessage(byte[] message, SimpleAddress address) throws ConnectionException {
 		if (isClosed())
 			throw new AlreadyClosedException();
-		SimpleAddress addr = new SimpleAddress(host, port);
-		Socket peer = clients.get(addr);// the target socket
+		if(address == null)
+			throw new IllegalArgumentException("Address can't be null.");
+		Socket peer = clients.get(address);// the target socket
 		try {
 			new MessageSender().sendMessage(message, peer);
 		} catch (IllegalStateException e) {
-			throw new PeerNotFoundException(host + ":" + port);
+			throw new PeerNotFoundException(address.toString());
 		} catch (IOException e) {
 			throw new ConnectionException(e);
 		}
+	}
+	
+	@Override
+	public void sendMessage(byte[] message, String host, int port) throws ConnectionException {
+		SimpleAddress address = new SimpleAddress(host, port);
+		sendMessage(message, address);
 	}
 
 	@Override
@@ -136,7 +143,7 @@ public class SocketMessagingServer implements MessagingServer, ConnectionStatusL
 	}
 
 	@Override
-	public void onConnectionEstablish(Socket socket) { // the callback method
+	public void onConnectionEstablished(Socket socket) { // the callback method
 														// which is invoked when
 														// the connection is
 														// established between
@@ -153,11 +160,11 @@ public class SocketMessagingServer implements MessagingServer, ConnectionStatusL
 		// add the socket to the clients map
 		clients.put(new SimpleAddress((InetSocketAddress) socket.getRemoteSocketAddress()), socket);
 		if (connCallback != null)
-			connCallback.onConnectionEstablish(socket);
+			connCallback.onConnectionEstablished(socket);
 	}
 
 	@Override
-	public void onDisconnect(Socket socket) {
+	public void onPeerDisconnected(Socket socket) {
 		// remove the disconnected socket from the clients map
 		clients.remove(new SimpleAddress((InetSocketAddress) socket.getRemoteSocketAddress()));
 		try {
@@ -165,7 +172,7 @@ public class SocketMessagingServer implements MessagingServer, ConnectionStatusL
 		} catch (IOException e) {
 		}
 		if (connCallback != null)
-			connCallback.onDisconnect(socket);
+			connCallback.onPeerDisconnected(socket);
 	}
 
 	public boolean isClosed() {

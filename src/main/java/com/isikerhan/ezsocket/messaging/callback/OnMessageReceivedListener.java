@@ -8,6 +8,6 @@ import com.isikerhan.ezsocket.messaging.Message;
  * @author Isik Erhan
  * 
  */
-public interface OnMessageReceiveListener {
-	public void onMessageReceive(Message message);
+public interface OnMessageReceivedListener {
+	public void onMessageReceived(Message message);
 }

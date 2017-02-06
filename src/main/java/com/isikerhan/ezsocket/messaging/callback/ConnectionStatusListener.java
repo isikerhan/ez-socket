@@ -9,6 +9,6 @@ import java.net.Socket;
  * 
  */
 public interface ConnectionStatusListener {
-	void onConnectionEstablish(Socket socket);
-	void onDisconnect(Socket socket);
+	void onConnectionEstablished(Socket socket);
+	void onPeerDisconnected(Socket socket);
 }

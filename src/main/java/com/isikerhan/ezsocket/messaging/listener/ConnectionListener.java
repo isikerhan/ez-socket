@@ -35,7 +35,7 @@ public class ConnectionListener implements Runnable, Closeable {
 			try {// wait for a client to connect
 				Socket socket = serverSocket.accept();
 				if (connCallback != null)// call the connection status callback
-					connCallback.onConnectionEstablish(socket);
+					connCallback.onConnectionEstablished(socket);
 			} catch (IOException e) {
 			}
 		}

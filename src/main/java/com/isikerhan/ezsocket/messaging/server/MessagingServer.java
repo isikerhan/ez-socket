@@ -2,6 +2,7 @@ package com.isikerhan.ezsocket.messaging.server;
 
 import java.io.Closeable;
 
+import com.isikerhan.ezsocket.address.SimpleAddress;
 import com.isikerhan.ezsocket.messaging.callback.ConnectionStatusListener;
 import com.isikerhan.ezsocket.messaging.exception.ConnectionException;
 
@@ -36,6 +37,14 @@ public interface MessagingServer extends Closeable{
 	 * @throws ConnectionException
 	 */
 	void sendMessage(byte[] message, String host, int port) throws ConnectionException;
+	
+	/**
+	 * Sends the given message to the peer which is at given {@linkplain SimpleAddress}
+	 * @param message	byte array message
+	 * @param address
+	 * @throws ConnectionException
+	 */
+	void sendMessage(byte[] message, SimpleAddress address) throws ConnectionException;
 	
 	/**
 	 * Sets connection status listener
