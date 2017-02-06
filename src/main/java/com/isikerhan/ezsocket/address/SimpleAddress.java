@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
- * This class represents an address Internet Protocol address simply as host and port.
+ * This class represents an Internet Protocol address simply as host and port.
  * 
  * @author Isik Erhan
  * 
