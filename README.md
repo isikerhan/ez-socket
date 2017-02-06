@@ -5,9 +5,9 @@ A simple Java library that provides an easy interface for exchanging messages ov
 Easily connect to a `MessagingServer` and send a message.
 
 ```java
-OnMessageReceiveListener messageListener = new OnMessageReceiveListener() {
+OnMessageReceivedListener messageListener = new OnMessageReceivedListener() {
   @Override
-  public void onMessageReceive(Message message) {
+  public void onMessageReceived(Message message) {
     System.out.printf("Server sent a message that is %d bytes size!", message.getBytes().length);
     //do something with the message
   }
