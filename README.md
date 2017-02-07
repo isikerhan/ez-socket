@@ -41,7 +41,7 @@ server.setConnectionStatusListener(new ConnectionStatusListener() {
   public void onConnectionEstablished(Socket socket) {
     //say welcome to the client
     SimpleAddress address = new SimpleAddress(socket.getInetAddress());
-    server.sendMessage(String.format("Welcome %s!", address), address);
+    server.sendMessage(String.format("Welcome %s!", address).getBytes(), address);
   }
 });
 ```
